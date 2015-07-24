@@ -8,10 +8,8 @@ var rainforest = require('./rainforest-eagle')
 var eagleConfig = config.rainforest.eagle;
 var hueApi = new hue.HueApi(config.hue.bridge.hostname, config.hue.bridge.user);
 
-var mediaRoom1Id = 2
-  , mediaRoom2Id = 1
-  , livingRoom1Id = 3
-  , livingRoom2Id = 5;
+var lights = config.hue.lights;
+var restoreState = [];
 
 function changeLightState(lightId, newState, restoreState) {
 	hueApi.setLightState(lightId, newState)
@@ -44,40 +42,21 @@ rainforest.getHistoricalDataForWeek(eagleConfig)
 			lightState = lightState.hue(0);
 		}
 		
-		var mediaRoom1RestoreState
-		  , mediaRoom2RestoreState
-		  , livingRoom1RestoreState
-		  , livingRoom2RestoreState;
+		var promises = [];
+		for (var i = 0; i < lights.length; i++) {
+			promises.push(hueApi.lightStatus(lights[i]));
+		}
 		
-		Q.allSettled([
-		    hueApi.lightStatus(mediaRoom1Id),
-		    hueApi.lightStatus(mediaRoom2Id),
-		    hueApi.lightStatus(livingRoom1Id),
-		    hueApi.lightStatus(livingRoom2Id)])
-			.spread(function(mediaRoom1Promise, mediaRoom2Promise, livingRoom1Promise, livingRoom2Promise) {
-				mediaRoom1RestoreState = mediaRoom1Promise.state === 'fulfilled' ? mediaRoom1Promise.value.state : undefined;
-				mediaRoom2RestoreState = mediaRoom2Promise.state === 'fulfilled' ? mediaRoom2Promise.value.state : undefined;
-				livingRoom1RestoreState = livingRoom1Promise.state === 'fulfilled' ? livingRoom1Promise.value.state : undefined;
-				livingRoom2RestoreState = livingRoom2Promise.state === 'fulfilled' ? livingRoom2Promise.value.state : undefined;
+		Q.allSettled(promises)
+			.then(function(results) {
+				for (var i = 0; i < results.length; i++) {
+					if (results[i].state === "fulfilled") {
+						changeLightState(lights[i], lightState, results[i].value.state);
+			        } else {
+			        	console.log(results[i].reason);
+			        }
+			    };
 			})
-			.then(function() {
-				if (mediaRoom1RestoreState) {
-					changeLightState(mediaRoom1Id, lightState, mediaRoom1RestoreState);
-				}
-				
-				if (mediaRoom2RestoreState) {
-					changeLightState(mediaRoom2Id, lightState, mediaRoom2RestoreState);
-				}
-				
-				if (livingRoom1RestoreState) {
-					changeLightState(livingRoom1Id, lightState, livingRoom1RestoreState);
-				}
-				
-				if (livingRoom2RestoreState) {
-					changeLightState(livingRoom2Id, lightState, livingRoom2RestoreState);
-				}
-			})
-			.done();
 	})
 	.fail(function(error) {
 		console.log(error);
