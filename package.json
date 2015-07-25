@@ -8,7 +8,7 @@
     "request": "2.58.0",
     "url-template": "2.0.6",
     "xmlbuilder": "2.6.4",
-    "node-hue-api": "1.0.x",
+    "node-hue-api": "*",
     "q": "*"
   }
 }
