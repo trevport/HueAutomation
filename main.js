@@ -12,17 +12,13 @@ var groupId = config.hue.group;
 
 function setGroupLightState(id, lightState) {
 	return hueApi.setGroupLightState(id, lightState)
-		.delay(2000)
-		.then(hueApi.setGroupLightState(id, lightState.bri(5).transition(2000)))
-		.delay(2000)
-		.then(hueApi.setGroupLightState(id, lightState.bri(100).transition(2000)))
-		.delay(2000)
-		.then(hueApi.setGroupLightState(id, lightState.bri(5).transition(2000)))
-		.delay(2000)
-		.then(hueApi.setGroupLightState(id, lightState.bri(100).transition(2000)))
-		.delay(2000)
-		.then(hueApi.setGroupLightState(id, lightState.bri(0).transition(2000)))
-		.delay(2000);
+		.delay(3500)
+		.then(function() { hueApi.setGroupLightState(id, lightState.bri(5).transition(3000)) })
+		.delay(3500)
+		.then(function() { hueApi.setGroupLightState(id, lightState.bri(255)) })
+		.delay(3500)
+		.then(function() { hueApi.setGroupLightState(id, lightState.bri(5)) })
+		.delay(3500)
 }
 
 function restoreLightState(id, restoreState) {
@@ -35,14 +31,14 @@ function restoreLightState(id, restoreState) {
 
 function getLightStateForPowerConsumed(powerConsumed) {
 	console.log('consumed ' + powerConsumed + ' kW');
-	var lightState = hue.lightState.create().on().transition(1500).bri(100).sat(245);
+	var lightState = hue.lightState.create().on().transition(1000).bri(255).sat(255);
 	
 	if (powerConsumed < 12) {
 		lightState = lightState.hue(25500);
 	} else if (powerConsumed < 16) {
-		lightState = lightState.hue(18000);
+		lightState = lightState.hue(12750);
 	} else if (powerConsumed < 20) {
-		lightState = lightState.hue(10000);
+		lightState = lightState.hue(7500);
 	} else {
 		lightState = lightState.hue(0);
 	}
@@ -74,9 +70,21 @@ rainforest.getPowerConsumedToday(eagleConfig)
 									}
 								}
 							})
+							.fail(function(error) {
+								console.log('failed to set group light state');
+								console.log(error);
+							})
 							.done();
 					})
+					.fail(function(error) {
+						console.log('failed to retrieve light state');
+						console.log(error);
+					})
 					.done();
+			})
+			.fail(function(error) {
+				console.log('failed to retrieve group details for group ' + groupId);
+				console.log(error);
 			})
 			.done();
 	})

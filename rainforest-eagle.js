@@ -22,27 +22,23 @@ module.exports = {
 			.insertAfter('MacId', options.macId)
 			.end();
 		
-//		request({
-//			method: 'POST',
-//			uri: url,
-//			auth: {
-//				username: options.username,
-//				password: options.password
-//			},
-//			body: body
-//		}, function(error, response, body) {
-//			if (error) {
-//				deferred.reject(error);
-//			} else {
-//				var result = JSON.parse(body);
-//				deferred.resolve(result);
-//			}
-//		});
-		
-		deferred.resolve({
-			'value[6]': 5
+		request({
+			method: 'POST',
+			uri: url,
+			auth: {
+				username: options.username,
+				password: options.password
+			},
+			body: body
+		}, function(error, response, body) {
+			if (error) {
+				deferred.reject(error);
+			} else {
+				var result = JSON.parse(body);
+				deferred.resolve(result);
+			}
 		});
-			
+		
 		return deferred.promise;
 	},
 	
