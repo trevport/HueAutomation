@@ -1,7 +1,7 @@
 {
 	"rainforest": {
 		"eagle": {
-			"hostname": "eagle-001fa1.local",
+			"hostname": "192.168.0.17",
 			"username": "001fa1",
 			"password": "f8580a6a242d1b2d",
 			"macId": "0xd8d5b90000003866"
@@ -10,10 +10,25 @@
 	
 	"hue": {
 		"bridge": {
-			"hostname": "192.168.0.7",
-			"user": "38ac2063ada20674c8656afa0219b"
+			"hostname": "192.168.0.29",
+			"user": "51d398226fdeac0b7bf4b7b22a6eb230"
 		},
-		"group": 6
+		"group": 8
+	},
+	
+	"powerAlerts": {
+		"low" : {
+			"usage": 22,
+			"hue": 25500
+		},
+		"medium" : {
+			"usage": 28,
+			"hue": 12750
+		},
+		"high" : {
+			"usage": 32,
+			"hue": 7500
+		}
 	}
 	
 }
