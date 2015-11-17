@@ -33,12 +33,12 @@ function getLightStateForPowerConsumed(powerConsumed) {
 	console.log('consumed ' + powerConsumed + ' kW');
 	var lightState = hue.lightState.create().on().transition(1000).bri(255).sat(255);
 	
-	if (powerConsumed < 12) {
-		lightState = lightState.hue(25500);
-	} else if (powerConsumed < 16) {
-		lightState = lightState.hue(12750);
-	} else if (powerConsumed < 20) {
-		lightState = lightState.hue(7500);
+	if (powerConsumed < config.powerAlerts.low.usage) {
+		lightState = lightState.hue(config.powerAlerts.low.hue);
+	} else if (powerConsumed < config.powerAlerts.medium.usage) {
+		lightState = lightState.hue(config.powerAlerts.medium.hue);
+	} else if (powerConsumed < config.powerAlerts.high.usage) {
+		lightState = lightState.hue(config.powerAlerts.high.hue);
 	} else {
 		lightState = lightState.hue(0);
 	}
